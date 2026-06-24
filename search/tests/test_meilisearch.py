@@ -459,8 +459,9 @@ class EngineTests(django.test.TestCase):
             'org = "EDX"',
         ]
         selected_facet = 'language'
+        allowed_orgs = ["EDX"]
         actual_distribution = engine._get_expanded_distribution(  # pylint: disable=protected-access
-            '', selected_facet, original_filter
+            '', allowed_orgs, selected_facet, original_filter
         )
         self.assertDictEqual(actual_distribution, multivalue_distribution)
         (query, opt_params), _ = engine.meilisearch_index.search.call_args  # pylint: disable=unused-variable

@@ -196,7 +196,13 @@ class MeilisearchEngine(SearchEngine):
         meilisearch_results = self.meilisearch_index.search(query_string, opt_params)
 
         if is_multivalue:
-            self._expand_facet_distibutions(field_dictionary, allowed_orgs, query_string, opt_params, meilisearch_results)
+            self._expand_facet_distibutions(
+                field_dictionary,
+                allowed_orgs,
+                query_string,
+                opt_params,
+                meilisearch_results,
+            )
 
         return process_results(meilisearch_results, self.index_name)
 
@@ -220,7 +226,13 @@ class MeilisearchEngine(SearchEngine):
             )
             meilisearch_results.setdefault("facetDistribution", {})[facet] = expanded_facet_distribution
 
-    def _get_expanded_distribution(self, query: str, allowed_orgs: list, facet_to_exclude: str, filter_rules: list) -> dict:
+    def _get_expanded_distribution(
+            self,
+            query: str,
+            allowed_orgs: list,
+            facet_to_exclude: str,
+            filter_rules: list
+    ) -> dict:
         """
         Run a secondary query excluding one facet to get its full distribution.
         Only return distribution data, without any actual results.
