@@ -719,6 +719,7 @@ class ElasticSearchEngine(SearchEngine):
         body = {"query": query}
 
         is_multivalue = kwargs.pop("is_multivalue", False)
+        allowed_orgs = kwargs.pop("allowed_orgs", [])
         if aggregation_terms:
             if is_multivalue:
                 body["aggs"] = _process_multivalue_aggregations(aggregation_terms, field_dictionary)
