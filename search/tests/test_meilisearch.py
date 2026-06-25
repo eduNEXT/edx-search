@@ -506,6 +506,26 @@ class EngineTests(django.test.TestCase):
         )
         self.assertDictEqual(aggregations["org"]["terms"], {"EDX": 2})
 
+    def test_get_expanded_distribution_filters_orgs_to_allowed(self):
+        engine = search.meilisearch.MeilisearchEngine(index='test_index')
+        engine.meilisearch_index.search = Mock(return_value={
+            "facetDistribution": {
+                "org": {"EDX": 2, "MITx": 1, "HarvardX": 3},  # More orgs than allowed
+            }
+        })
+
+        allowed_orgs = ["EDX", "MITx"]
+        facet_distribution = engine._get_expanded_distribution(  # pylint: disable=protected-access
+            query="",
+            allowed_orgs=allowed_orgs,
+            facet_to_exclude="org",
+            filter_rules=[],
+        )
+
+        # Only the allowed orgs are returned; HarvardX is filtered out
+        self.assertDictEqual(facet_distribution, {"EDX": 2, "MITx": 1})
+        self.assertEqual(set(facet_distribution.keys()), set(allowed_orgs))
+
     def test_single_value_search_narrows_selected_facet(self):
         engine = search.meilisearch.MeilisearchEngine(index='test_index')
         engine.meilisearch_index.search = Mock(side_effect=[
